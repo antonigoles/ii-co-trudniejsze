@@ -1,0 +1,107 @@
+html {
+    font-family: "Roboto Mono", monospace;
+    font-optical-sizing: auto;
+    font-style: normal;
+    width: 100%;
+    height: 100%;
+    margin: 0px;
+}
+
+body {
+    width: 100%;
+    height: 100%;
+    margin: 0px;
+}
+
+.option-button {
+    outline: none;
+    border: 3px solid rgba(0,0,0,0.8);
+    padding: 10px 15px;
+    font-weight: bold;
+    font-family: "Roboto Mono", monospace;
+    background-color: white;
+    text-align: center;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.option-button:hover {
+    cursor: pointer;
+    background-color: black;
+    color: white;
+}
+
+.option-button {
+    width: 50%; 
+    user-select: none;
+}
+
+.option-button-idk {
+    border: 0px solid red;
+    color: red;
+    max-height: 10%;
+}
+
+.option-button-idk:hover {
+    background-color: red;
+}
+
+@media (max-aspect-ratio: 0.77) {
+   .option-button {
+        height: 18%; 
+        width: 90%; 
+    }     
+}
+
+.question-header {
+    text-align: center;
+    user-select: none;
+}
+
+.main-container {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    gap: 15px;
+}
+
+
+.logout-button {
+    position: absolute;
+    top: 5px;
+    left: 5px;
+}
+
+.login-button {
+    display: flex;
+    /* background-color: #00669e; */
+    border: 4px solid #00669e;
+    color: #00669e;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    padding: 10px;
+    width: 40vh;
+    height: 20vh;
+    aspect-ratio: 1;
+}
+
+@media (max-aspect-ratio: 0.77) {
+   .login-button {
+        height: 80%;
+        width: 90%;
+    }     
+}
+
+.login-uwr-logo {
+    width: 100%;
+    height: 70vh;
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: contain;
+    background-image: url('/assets/uniwroc.svg');
+}
