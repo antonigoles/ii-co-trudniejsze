@@ -52,11 +52,36 @@ class DatabaseConnection
         return self::$instance;
     }
 
+    /**
+     * Make any query
+     * @param string $query
+     * @param array $params
+     * @return array
+     */
     public function query(string $query, array $params): array
     {
         $stmt = $this->pdo->prepare($query);
         $stmt->execute($params);
         return $stmt->fetchAll(\PDO::FETCH_ASSOC);
+    }
+
+
+    /**
+     * Run query and retrieve specific field as a list
+     * @param string $query
+     * @param array $params
+     * @return array
+     */
+    public function query_field(string $query, array $params, string $field): array
+    {
+        $stmt = $this->pdo->prepare($query);
+        $stmt->execute($params);
+        return array_map(
+            function ($row) use ($field) { 
+                return $row[$field];
+            }, 
+            $stmt->fetchAll(\PDO::FETCH_ASSOC)
+        );
     }
 }
 
