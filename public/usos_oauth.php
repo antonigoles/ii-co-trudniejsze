@@ -4,6 +4,7 @@ require_once __DIR__ . '/../vendor/autoload.php';
 
 use App\Secrets;
 use App\OAuth;
+use App\Session;
 
 $secrets = new Secrets();
 $secrets->load_data();
@@ -11,7 +12,7 @@ $secrets->load_data();
 // 1. we land onto this php script from a button click
 if (!isset($_GET['oauth_token']) || !isset($_GET['oauth_verifier'])) {
     // Let's start new session
-    session_start();
+    Session::start_session();
 
     // 2. Aquire request token like usos says
 
@@ -44,7 +45,7 @@ if (!isset($_GET['oauth_token']) || !isset($_GET['oauth_verifier'])) {
     die();
 } else {
     // 3. We came back from the OAuth page
-    session_start();
+    Session::start_session();
 
     // 4. Verify saved tokens
     if (!isset($_SESSION['oauth_token']) || !isset($_SESSION['oauth_token_secret'])) {

@@ -2,6 +2,8 @@
     require_once __DIR__ . '/../vendor/autoload.php';
 
     use App\OAuth;
+
+    $should_reauthenticate = OAuth::should_reauthenticate();
 ?>
 
 <!DOCTYPE html>
@@ -15,12 +17,12 @@
 </head>
 <body>
     <?php 
-        !OAuth::should_reauthenticate() && require('./components/logout-button.php')
+        !$should_reauthenticate && require('./components/logout-button.php')
     ?>
 
     <div class="main-container">
     <?php 
-        OAuth::should_reauthenticate() ? 
+        $should_reauthenticate ? 
             require('./components/login-with-usos.php') :
             require('./components/choose-option.php')
     ?>

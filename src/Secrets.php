@@ -12,7 +12,7 @@ class Secrets
 
     public function load_data(): void
     {
-        $file_content = file_get_contents(__DIR__ .'/../config.json');
+        $file_content = file_get_contents(__DIR__ .'/../.config.json');
         $this->data = json_decode(
             $file_content, 
             true, 

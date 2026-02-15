@@ -6,7 +6,7 @@ class OAuth
 {
     public static function should_reauthenticate(): bool 
     {
-        session_start();
+        Session::start_session();
 
         if (!isset($_SESSION['token_creation_timestamp'])) {
             return true;
