@@ -10,12 +10,26 @@
 
     $run_migrations = $connection->query("SELECT name FROM migrations;", []);
     $run_migrations = array_map(static fn ($row) => $row['name'], $run_migrations);
-    $iterator = new FilesystemIterator(__DIR__, FilesystemIterator::SKIP_DOTS);
+    $iterator = new FilesystemIterator(
+        __DIR__, 
+        FilesystemIterator::SKIP_DOTS
+    );
 
+    $files = [];
+    foreach ($iterator as $fileInfo) {
+        if ($fileInfo->isFile()) {
+            $files[] = $fileInfo;
+        }
+    };
+
+    usort(
+        $files, 
+        static fn ($a, $b): int => strnatcasecmp($a->getFilename(), $b->getFilename())
+    );
 
     $non_migration_scripts = ['run.php', 'clear-database.php'];
 
-    foreach ($iterator as $fileInfo) {
+    foreach ($files as $fileInfo) {
         if ($fileInfo->isFile()) {
             $migration_name = $fileInfo->getFilename();
             
