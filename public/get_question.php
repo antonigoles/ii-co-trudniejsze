@@ -7,10 +7,16 @@
 
     header('Content-Type: application/json; charset=utf-8');
 
-    if (OAuth::should_reauthenticate()) {
-        echo '{ "error": "Sesja jest martwa" }';
+    function error_out(string $message) {
         http_response_code(403);
+        header('Content-Type: application/json; charset=utf-8');
+        echo "{ \"error\": \"$message\" }";
         die();
+    }
+
+    if (OAuth::should_reauthenticate()) {
+        Session::kill_session();
+        error_out("Sesja jest martwa");
     }
 
     try {
@@ -20,9 +26,7 @@
         }
     } catch (\Throwable $th) {
         Session::kill_session();
-        echo '{ "error": "Sesja jest martwa" }';
-        http_response_code(403);
-        die();
+        error_out("Sesja jest martwa");
     }
 
     http_response_code(response_code: 200);

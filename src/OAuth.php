@@ -80,7 +80,8 @@ class OAuth
     public static function fetch_user_id(): string|null
     {
         $data = self::fetch_user_data();
-        return $data['id'] ?? null;
+        if (!isset($data['id'])) throw new \Exception('Auth error'); 
+        return $data['id'];
     }
 
     public static function send_oauth1_request($method, $url, $params, $consumerKey, $consumerSecret, $token = '', $tokenSecret = '') {

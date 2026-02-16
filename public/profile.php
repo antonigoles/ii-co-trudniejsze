@@ -24,7 +24,7 @@
     <?php 
         $should_reauthenticate ? 
             require('./components/login-with-usos.php') :
-            require('./components/home-screen.php')
+            require('./components/choose-option.php')
     ?>
     </div>
 </body>

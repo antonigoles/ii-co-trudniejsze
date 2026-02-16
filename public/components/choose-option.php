@@ -1,3 +1,5 @@
+<div class="question-count"></div>
+
 <h1 class="question-header opacity-transition"> Co twoim zdaniem było trudniejsze? </h1>
 <a class="option-button option-a opacity-transition faded-out-button">Przedmiot A</a>
 <a class="option-button option-b opacity-transition faded-out-button">Przedmiot B</a>
@@ -20,6 +22,10 @@
         
         setTimeout(async () => {
             const data = await (await fetch('/get_question.php')).json();
+            if (data['error']) {
+                window.location.href = '/';
+                return;
+            }
             document.querySelector('.option-a').innerHTML = data['option_a'];
             document.querySelector('.option-b').innerHTML = data['option_b'];
 
@@ -36,6 +42,8 @@
         const response = await fetch(`/question_answer.php?option=${option}`);
         if (response.status == 200) {
             await load_next_question();
+        } else {
+            window.location.href = '/';
         }
     }
 
