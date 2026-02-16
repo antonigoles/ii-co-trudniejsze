@@ -36,7 +36,7 @@
                 Tylko ID użytkownika (nie numer albumu)
             </p>
         </div>
-        <div class="faq-modal-close-btn">Close</div>
+        <div class="faq-modal-close-btn">Zamknij</div>
     </div>
 </div>
 

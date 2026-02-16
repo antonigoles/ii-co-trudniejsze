@@ -58,6 +58,49 @@ class OAuth
         return $result;
     }
 
+    public static function fetch_user_courses(): array|null
+    {
+        if (self::should_reauthenticate()) return null;
+        $cache_hit = self::try_read_from_cache('user_courses');
+        if ($cache_hit) {
+            return is_string($cache_hit) ? json_decode($cache_hit, true) : $cache_hit;
+        }
+
+        Session::start_session();
+
+        $secrets = new Secrets();
+        $secrets->load_data();
+
+        $response = self::send_oauth1_request(
+            'GET',
+            'https://usosapps.uwr.edu.pl/services/courses/user',
+            [
+                'fields' => 'course_editions'
+            ],
+            $secrets->get_secret(Secrets::USOS_CONSUMER_KEY),
+        $secrets->get_secret(Secrets::USOS_CONSUMER_SECRET),
+        $_SESSION['oauth_token'],
+        $_SESSION['oauth_token_secret']
+        );
+
+        $result = json_decode($response, true) ?? null;
+
+        self::write_cache('user_courses', $response);
+
+        return $result;
+    }
+
+    public static function fetch_user_course_names(): array|null
+    {
+        $data = self::fetch_user_courses();
+        if (!$data) throw new \Exception('Auth error'); 
+
+        return array_map(
+            static fn ($course) => $course['course_name']['pl'], 
+            array_merge(...array_values($data['course_editions']))
+        );
+    }
+
     public static function try_read_from_cache(string $key): mixed 
     {
         Session::start_session();

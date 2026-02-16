@@ -3,10 +3,11 @@
 namespace App;
 
 use App\OAuth;
+use App\ClassResolver;
 
 class Questions 
 {
-    public const QUESTION_COUNT = 985;
+    public const QUESTION_COUNT = 4403;
 
     public const CLASS_CATEGORIES = [
         "kurs", "projekt", "seminarium", "przedmiot"
@@ -45,6 +46,41 @@ class Questions
         }
     }
 
+    public static function fetch_valid_question_id_list(): array
+    {
+        if (OAuth::should_reauthenticate()) {
+            throw new \Exception('Auth error');
+        }
+
+        $cache_hit = self::try_read_from_cache('valid_question_list');
+        if ($cache_hit) {
+            return $cache_hit;
+        }
+
+        $classes = array_values(ClassResolver::match_classes_from_usos_to_local());
+        $classes_query_string = implode(',', array_map(static fn ($class) => "'$class'", $classes));
+
+        // match class to id
+        $connection = DatabaseConnection::get();
+        $class_ids = $connection->query_field(
+            "SELECT * FROM classes WHERE name IN ($classes_query_string)", 
+            [],
+            'id'
+        );    
+
+        $class_ids_string = implode(',', $class_ids);
+
+        $resolved_classes = $connection->query_field(
+            "SELECT * FROM questions WHERE option_a IN ($class_ids_string) AND option_b IN ($class_ids_string)", 
+            [],
+            'id'
+        );
+
+        self::write_cache('valid_question_list', $resolved_classes);
+
+        return $resolved_classes;
+    }
+
     public static function get_next_question(): Question|null
     {
         if (OAuth::should_reauthenticate()) {
@@ -53,7 +89,13 @@ class Questions
 
         $connection = DatabaseConnection::get();
 
-        $random_question_id = rand(1, self::QUESTION_COUNT + 1);
+        $valid_question_list = self::fetch_valid_question_id_list();
+
+        if (empty($valid_question_list)) {
+            return null;
+        }
+
+        $random_question_id = $valid_question_list[rand(0, count($valid_question_list) - 1)];
 
         $question = $connection->query(
             "SELECT
