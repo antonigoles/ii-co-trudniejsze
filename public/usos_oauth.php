@@ -32,7 +32,7 @@ if (!isset($_GET['oauth_token']) || !isset($_GET['oauth_verifier'])) {
 
     if (!isset($params['oauth_token']) || !isset($params['oauth_token_secret'])) {
         echo 'Niepoprawna odpowiedź z USOSa. Spróbuj później';
-        session_destroy();
+        Session::kill_session();
         die();
     }
 
@@ -50,13 +50,13 @@ if (!isset($_GET['oauth_token']) || !isset($_GET['oauth_verifier'])) {
     // 4. Verify saved tokens
     if (!isset($_SESSION['oauth_token']) || !isset($_SESSION['oauth_token_secret'])) {
         echo 'Wykryto potencjalny atak CSRF';
-        session_destroy();
+        Session::kill_session();
         die();
     }
 
     if ($_SESSION['oauth_token'] != $_GET['oauth_token']) {
         echo 'Wykryto potencjalny atak CSRF';
-        session_destroy();
+        Session::kill_session();
         die();
     }
 
@@ -76,7 +76,7 @@ if (!isset($_GET['oauth_token']) || !isset($_GET['oauth_verifier'])) {
 
     if (!isset($params['oauth_token']) || !isset($params['oauth_token_secret'])) {
         echo 'Niepoprawna odpowiedź z USOSa. Spróbuj później';
-        session_destroy();
+        Session::kill_session();
         die();
     }
 

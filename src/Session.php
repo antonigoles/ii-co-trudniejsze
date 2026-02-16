@@ -9,5 +9,12 @@ class Session
             session_start();
         }
     }
+
+    public static function kill_session()
+    {
+        if (session_status() == PHP_SESSION_ACTIVE) {
+            session_destroy();
+        }
+    }
 }
 ?>

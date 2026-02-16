@@ -12,5 +12,5 @@ php > 8.3 # sudo apt install php8.3
 Aby odpalić szybko, na czysto, przez kontener
 
 ```sh
-docker-compose up -d --build
+docker compose up -d --build
 ```

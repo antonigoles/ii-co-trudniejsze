@@ -105,3 +105,24 @@ body {
     background-size: contain;
     background-image: url('/assets/uniwroc.svg');
 }
+
+.opacity-transition {
+    transition: opacity 0.25s;
+}
+
+.faded-out-button {
+    pointer-events: none;
+    opacity: 0.0;
+}
+
+.locked-button {
+    pointer-events: none;
+    background-color: black;
+    color: white;
+}
+
+.locked-button-red {
+    pointer-events: none;
+    background-color: red;
+    color: white;
+}

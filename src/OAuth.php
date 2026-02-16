@@ -28,10 +28,16 @@ class OAuth
 
     public static function fetch_user_data(): array|null
     {
+        if (self::should_reauthenticate()) return null;
+        $cache_hit = self::try_read_from_cache('user_data');
+        if ($cache_hit) {
+            return is_string($cache_hit) ? json_decode($cache_hit, true) : $cache_hit;
+        }
+
+        Session::start_session();
+
         $secrets = new Secrets();
         $secrets->load_data();
-
-        if (self::should_reauthenticate()) return null;
 
         $response = self::send_oauth1_request(
             'GET',
@@ -45,7 +51,30 @@ class OAuth
         $_SESSION['oauth_token_secret']
         );
 
-        return json_decode($response, true) ?? null;
+        $result = json_decode($response, true) ?? null;
+
+        self::write_cache('user_data', $response);
+
+        return $result;
+    }
+
+    public static function try_read_from_cache(string $key): mixed 
+    {
+        Session::start_session();
+        if (!isset($_SESSION['oauth_cache'])) return null;
+        $cache = json_decode($_SESSION['oauth_cache'], true);
+        return $cache[$key] ?? null;
+    }
+
+    public static function write_cache(string $key, mixed $value): void 
+    {
+        Session::start_session();
+        $cache = [];
+        if (isset($_SESSION['oauth_cache'])) {
+            $cache = json_decode($_SESSION['oauth_cache'], true);
+        }
+        $cache[$key] = $value;
+        $_SESSION['oauth_cache'] = json_encode($cache);
     }
 
     public static function fetch_user_id(): string|null
@@ -124,7 +153,7 @@ class OAuth
         $response = curl_exec($ch);
         
         if (curl_errno($ch)) {
-            throw new Exception('Błąd cURL: ' . curl_error($ch));
+            throw new \Exception('Błąd cURL: ' . curl_error($ch));
         }
             
         return $response;

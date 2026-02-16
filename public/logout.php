@@ -3,6 +3,7 @@ require_once __DIR__ . '/../vendor/autoload.php';
 
 use App\OAuth;
 use App\Secrets;
+use App\Session;
 
 $secrets = new Secrets();
 $secrets->load_data();
@@ -20,7 +21,7 @@ if (!OAuth::should_reauthenticate()) {
     );
 }
 
-session_destroy();
+Session::kill_session();
 
 $base_app_url = $secrets->get_secret(Secrets::APP_URL);
 header("Location: $base_app_url");

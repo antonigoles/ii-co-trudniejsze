@@ -6,6 +6,8 @@ use App\OAuth;
 
 class Questions 
 {
+    public const QUESTION_COUNT = 985;
+
     public const CLASS_CATEGORIES = [
         "kurs", "projekt", "seminarium", "przedmiot"
     ];
@@ -14,7 +16,28 @@ class Questions
 
     public static function answer_question(Question $question, string $option) 
     {
-        // TODO: Connect to database and write data
+        if (!in_array($option, self::VALID_QUESTION_OPTIONS)) {
+            throw new \Exception("Wrong option");
+        }
+
+        $user_id = OAuth::fetch_user_id();
+
+        if ($user_id == null) {
+            throw new \Exception('Auth error');
+        }
+
+        $connection = DatabaseConnection::get();
+
+        $connection->query(
+            "INSERT INTO answers 
+            VALUES (:user_id, :question, :answer)",
+            
+            [
+                "user_id" => $user_id,
+                "question" => $question->get_id(),
+                "answer" => $option
+            ]
+        );
     }
 
     public static function get_next_question(): Question|null
@@ -22,28 +45,28 @@ class Questions
         if (OAuth::should_reauthenticate()) {
             return null;
         }
-        // 1. Choose random category
-        $category = self::CLASS_CATEGORIES[rand(0, count(self::CLASS_CATEGORIES) - 1)];
 
-        // 2. Read .json
-        $file_content = file_get_contents(__DIR__ .'/../class_list.json');
-        $data = json_decode(
-            $file_content, 
-            true, 
-            512,
-            JSON_THROW_ON_ERROR
-        ) ?? [];
+        $connection = DatabaseConnection::get();
+
+        $random_question_id = rand(1, self::QUESTION_COUNT + 1);
+
+        $question = $connection->query(
+            "SELECT
+                        questions.id, 
+                        opt_a.name as option_a,
+                        opt_b.name as option_b
+                    FROM questions 
+                    JOIN classes opt_a ON opt_a.id = option_a
+                    JOIN classes opt_b ON opt_b.id = option_b
+                    WHERE questions.id = :question_id;", 
+            [
+                "question_id" => $random_question_id
+            ]
+        );
+
+        $question = $question[0];
         
-        // 2. Choose 2 random (non-repeating) classes
-        $pool = $data[$category];
-        $random_choice_a_index = rand(0, count($pool) - 1);
-        $option_a = $pool[$random_choice_a_index];
-        $pool[$random_choice_a_index] = $pool[count($pool)-1];
-        array_pop($pool);
-        $random_choice_b_index = rand(0, count($pool) - 1);
-        $option_b = $pool[$random_choice_b_index];
-
-        return new Question($option_a, $option_b);
+        return new Question($question['id'], $question['option_a'], $question['option_b']);
     }
 }
 

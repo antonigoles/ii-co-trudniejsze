@@ -5,51 +5,48 @@
     use App\Question;
     use App\Questions;
 
-    if (!isset($_GET['option'])) {
-        echo 'Niepoprawna opcja';
+    function error_out(string $message) {
         http_response_code(403);
+        header('Content-Type: application/json; charset=utf-8');
+
+        echo "{ \"error\": \"$message\" }";
         die();
     }
 
+    if (!isset($_GET['option'])) {
+        error_out("Sesja jest martwa");
+    }
+
     if (OAuth::should_reauthenticate()) {
-        echo 'Sesja jest martwa';
-        http_response_code(403);
-        die();
+        error_out("Sesja jest martwa");
     }
 
     $option = $_GET['option'];
 
     if (!in_array($option, Questions::VALID_QUESTION_OPTIONS)) {
-        echo 'Niepoprawna opcja';
-        http_response_code(403);
-        die();
+        error_out("Niepoprawna opcja");
     }
 
     // pull question
     $question = $_SESSION['current_question'] ?? null;
     if (!$question) {
-        echo 'Nie pamiętam żebyś miał odpowiadać na jakieś pytanie';
-        http_response_code(403);
-        die();
+        error_out("Nie pamiętam żebyś miał odpowiadać na jakieś pytanie");
     }
 
     $question = json_decode($question, true);
     if (!$question) {
-        echo 'Nie pamiętam żebyś miał odpowiadać na jakieś pytanie';
-        http_response_code(403);
-        die();
+        error_out("Nie pamiętam żebyś miał odpowiadać na jakieś pytanie");
     }
 
     $question = Question::from_array($question);
     if (!$question) {
-        echo 'Nie pamiętam żebyś miał odpowiadać na jakieś pytanie';
-        http_response_code(403);
-        die();
+        error_out("Nie pamiętam żebyś miał odpowiadać na jakieś pytanie");
     }
 
     Questions::answer_question($question, $option);
 
     unset($_SESSION["current_question"]);
     http_response_code(200);
-    echo "OK";
+    header('Content-Type: application/json; charset=utf-8');
+    echo '{ "success": "OK" }';
 ?>

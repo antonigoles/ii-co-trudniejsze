@@ -5,13 +5,14 @@ namespace App;
 class Question 
 {
     public function __construct(
+        private int $id,
         private string $option_a,
         private string $option_b,
     ) {}
 
-    public function get_hash(): string
+    public function get_id(): int
     {
-        return hash('sha256', $this->option_a . $this->option_b);
+        return $this->id;
     }
 
     public function get_option_a(): string
@@ -27,6 +28,7 @@ class Question
     public function to_array(): array 
     {
         return [
+            'id' => $this->id,
             'option_a' => $this->option_a,
             'option_b' => $this->option_b,
         ];
@@ -35,8 +37,9 @@ class Question
     public static function from_array(array $data): Question 
     {
         return new Question(
+            $data['id'],
             $data['option_a'], 
-            $data['option_b'] 
+            $data['option_b'],
         );
     }
 }
