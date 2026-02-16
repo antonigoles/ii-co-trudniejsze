@@ -7,6 +7,7 @@
 ?>
 
 <div class="profile-page">
+    <div class="cat-gif"></div>
 
     <h1 style="user-select: none; text-align: center;"> 
         Dzień dobry numerze USOS #<?php echo OAuth::fetch_user_id() ?>
@@ -15,10 +16,6 @@
         Czy wiesz że odpowiedziałaś/łeś już na <?php echo Questions::get_answered_question_count() ?> pytań?
     </p>
 
-    <div class="cat-gif"></div>
-    <p>
-        Zobacz tego gifa z kotem
-    </p>
 
     <h3>Twoje przedmioty</h3>
     <p style="font-size: small;">

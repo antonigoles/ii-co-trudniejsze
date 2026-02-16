@@ -16,12 +16,14 @@
     <?php require_once('./styles/style-imports.php') ?>
 </head>
 <body>
-    <div class="main-container">
-    <?php 
-        $should_reauthenticate ? 
-            require('./components/login-with-usos.php') :
-            require('./components/choose-option.php')
-    ?>
+    <div class="global-container">
+        <div class="main-container">
+        <?php 
+            $should_reauthenticate ? 
+                require('./components/login-with-usos.php') :
+                require('./components/choose-option.php')
+        ?>
+        </div>
     </div>
 </body>
 </html>

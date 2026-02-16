@@ -5,7 +5,7 @@
 <div class="option-button option-button-idk opacity-transition faded-out-button">Nie wiem :(</div>
 
 <div class="faq-modal">
-    <div class="fag-modal-actual">
+    <div class="fag-modal-actual transition-scale scale-0">
         <div class="faq-modal-content" style="display: flex; flex-direction: column; align-items: center;">
             <h1>Dziękuje :)</h1>
             <p style="text-align: center;">Odpowiedziałeś w tej sesji już na 10 pytań, możesz zrobić sobie przerwę albo kontynować</p>
@@ -33,6 +33,7 @@ document.querySelector(".cat-gif").style.backgroundImage = `url("/assets/cat-gif
             document.querySelector(".progress-count").innerHTML = `${++progress_count} z 10`
             if (progress_count == 10) {
                 document.querySelector(".progress-count").innerHTML = '';
+                document.querySelector('.fag-modal-actual').classList.toggle('scale-0');
                 document.querySelector('.faq-modal').style.visibility = 'visible';
             }
         }
@@ -68,7 +69,7 @@ document.querySelector(".cat-gif").style.backgroundImage = `url("/assets/cat-gif
             return;
         }
         
-        setTimeout(action, 1500)
+        setTimeout(action, 1000)
     }
 
     load_next_question(true);
@@ -85,8 +86,8 @@ document.querySelector(".cat-gif").style.backgroundImage = `url("/assets/cat-gif
 
     document.querySelector('.option-a').addEventListener('click', () => {
         if (buttons_locked) return;
-        setTimeout(() => toggle_fade_item('.option-a'), 1000);
-        setTimeout(() => toggle_lock_button('.option-a'), 1450);
+        setTimeout(() => toggle_fade_item('.option-a'), 700);
+        setTimeout(() => toggle_lock_button('.option-a'), 950);
         toggle_lock_button('.option-a');
         toggle_fade_item('.option-b');
         toggle_fade_item('.option-button-idk');
@@ -95,8 +96,8 @@ document.querySelector(".cat-gif").style.backgroundImage = `url("/assets/cat-gif
 
     document.querySelector('.option-b').addEventListener('click', () => {
         if (buttons_locked) return;
-        setTimeout(() => toggle_fade_item('.option-b'), 1000);
-        setTimeout(() => toggle_lock_button('.option-b'), 1450);
+        setTimeout(() => toggle_fade_item('.option-b'), 700);
+        setTimeout(() => toggle_lock_button('.option-b'), 950);
         toggle_lock_button('.option-b');
         toggle_fade_item('.option-a');
         toggle_fade_item('.option-button-idk');
@@ -105,8 +106,8 @@ document.querySelector(".cat-gif").style.backgroundImage = `url("/assets/cat-gif
 
     document.querySelector('.option-button-idk').addEventListener('click', () => {
         if (buttons_locked) return;
-        setTimeout(() => toggle_fade_item('.option-button-idk'), 1000);
-        setTimeout(() => toggle_lock_button('.option-button-idk', true), 1450);
+        setTimeout(() => toggle_fade_item('.option-button-idk'), 700);
+        setTimeout(() => toggle_lock_button('.option-button-idk', true), 950);
         toggle_lock_button('.option-button-idk', true);
         toggle_fade_item('.option-a');
         toggle_fade_item('.option-b');
