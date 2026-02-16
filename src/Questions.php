@@ -38,6 +38,11 @@ class Questions
                 "answer" => $option
             ]
         );
+
+        $cache_hit = self::try_read_from_cache("answered_count");
+        if ($cache_hit) {
+            self::write_cache("answered_count", intval($cache_hit) + 1);
+        }
     }
 
     public static function get_next_question(): Question|null
@@ -67,6 +72,62 @@ class Questions
         $question = $question[0];
         
         return new Question($question['id'], $question['option_a'], $question['option_b']);
+    }
+
+    /**
+     * This method is session safe which means we don't care about 
+     * correct results that much so we can skip handling dead session
+     * @return int
+     */
+    public static function get_answered_question_count(): int
+    {
+        if (OAuth::should_reauthenticate()) {
+            return 0;
+        }
+
+        $cache_hit = self::try_read_from_cache("answered_count");
+
+        if ($cache_hit) {
+            return intval($cache_hit);
+        }
+
+        $connection = DatabaseConnection::get();
+
+        try {
+            $user_id = OAuth::fetch_user_id();
+        } catch (\Throwable $th) {
+            return 0;
+        }
+
+        $result = $connection->query_field(
+            "SELECT count(*) FROM answers WHERE owner_id = :owner_id;",
+            [
+                "owner_id" => $user_id
+            ],
+            'count'
+        );
+
+        self::write_cache("answered_count", intval($result[0]));
+        return $result[0];
+    }
+
+    public static function try_read_from_cache(string $key): mixed 
+    {
+        Session::start_session();
+        if (!isset($_SESSION['questions_cache'])) return null;
+        $cache = json_decode($_SESSION['questions_cache'], true);
+        return $cache[$key] ?? null;
+    }
+
+    public static function write_cache(string $key, mixed $value): void 
+    {
+        Session::start_session();
+        $cache = [];
+        if (isset($_SESSION['questions_cache'])) {
+            $cache = json_decode($_SESSION['questions_cache'], true);
+        }
+        $cache[$key] = $value;
+        $_SESSION['questions_cache'] = json_encode($cache);
     }
 }
 

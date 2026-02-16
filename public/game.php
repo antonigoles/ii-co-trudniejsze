@@ -16,10 +16,6 @@
     <?php require_once('./styles/style-imports.php') ?>
 </head>
 <body>
-    <?php 
-        !$should_reauthenticate && require('./components/logout-button.php')
-    ?>
-
     <div class="main-container">
     <?php 
         $should_reauthenticate ? 

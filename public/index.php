@@ -20,6 +20,10 @@
         !$should_reauthenticate && require('./components/logout-button.php')
     ?>
 
+    <?php 
+        !$should_reauthenticate && require('./components/profile-button.php')
+    ?>
+
     <div class="main-container">
     <?php 
         $should_reauthenticate ? 

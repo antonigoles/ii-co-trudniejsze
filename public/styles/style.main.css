@@ -76,6 +76,13 @@ body {
     left: 5px;
 }
 
+.profile-button {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    text-align: right;
+}
+
 .login-button {
     display: flex;
     /* background-color: #00669e; */
@@ -178,5 +185,19 @@ a {
    .fag-modal-actual {
         height: 90%;
         width: 90%;
+    }     
+}
+
+.cat-gif {
+    width: 30%;
+    aspect-ratio: 1;
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: contain;
+}
+
+@media (max-aspect-ratio: 0.77) {
+   .cat-gif {
+        width: 80%;
     }     
 }

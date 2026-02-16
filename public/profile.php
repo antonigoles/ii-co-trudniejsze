@@ -19,12 +19,12 @@
     <?php 
         !$should_reauthenticate && require('./components/logout-button.php')
     ?>
-
+    
     <div class="main-container">
     <?php 
         $should_reauthenticate ? 
             require('./components/login-with-usos.php') :
-            require('./components/choose-option.php')
+            require('./components/profile.php')
     ?>
     </div>
 </body>
