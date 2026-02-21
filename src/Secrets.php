@@ -3,12 +3,27 @@ namespace App;
 
 class Secrets 
 {
+    private static $instance;
+
     private array $data;
 
     public const USOS_APP_NAME = 'name';
     public const USOS_CONSUMER_KEY = 'consumer_key';
     public const USOS_CONSUMER_SECRET = 'consumer_secret';
     public const APP_URL = 'app_url';
+    public const COURSE_MODIFIERS = 'course_modifiers';
+
+    public static function get(): Secrets 
+    {
+        if (isset(self::$instance)) {
+            return self::$instance;
+        }
+
+        self::$instance = new Secrets();
+        self::$instance->load_data();
+
+        return self::$instance;
+    }
 
     public function load_data(): void
     {
@@ -21,7 +36,7 @@ class Secrets
         ) ?? [];
     }
 
-    public function get_secret(string $secret): string|null
+    public function get_secret(string $secret): mixed
     {
         return $this->data[$secret] ?? null;
     }

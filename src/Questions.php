@@ -7,11 +7,9 @@ use App\ClassResolver;
 
 class Questions 
 {
-    public const QUESTION_COUNT = 4403;
+    use CachableTrait;
 
-    public const CLASS_CATEGORIES = [
-        "kurs", "projekt", "seminarium", "przedmiot"
-    ];
+    public const QUESTION_COUNT = 4403;
 
     public const VALID_QUESTION_OPTIONS = ['a','b','none'];
 
@@ -46,6 +44,8 @@ class Questions
         }
     }
 
+
+    // TODO: Rewrite this
     public static function fetch_valid_question_id_list(): array
     {
         if (OAuth::should_reauthenticate()) {
@@ -151,25 +151,6 @@ class Questions
 
         self::write_cache("answered_count", intval($result[0]));
         return $result[0];
-    }
-
-    public static function try_read_from_cache(string $key): mixed 
-    {
-        Session::start_session();
-        if (!isset($_SESSION['questions_cache'])) return null;
-        $cache = json_decode($_SESSION['questions_cache'], true);
-        return $cache[$key] ?? null;
-    }
-
-    public static function write_cache(string $key, mixed $value): void 
-    {
-        Session::start_session();
-        $cache = [];
-        if (isset($_SESSION['questions_cache'])) {
-            $cache = json_decode($_SESSION['questions_cache'], true);
-        }
-        $cache[$key] = $value;
-        $_SESSION['questions_cache'] = json_encode($cache);
     }
 }
 

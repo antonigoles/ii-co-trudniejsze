@@ -1,6 +1,7 @@
 <?php  
     require_once __DIR__ . '/../../vendor/autoload.php';
 
+    use App\ArrayUtilities;
     use App\ClassResolver;
     use App\OAuth;
     use App\Questions;
@@ -22,13 +23,16 @@
     <?php 
 
         try {
-            $classes = ClassResolver::match_classes_from_usos_to_local();
+            $classes_grouped = ArrayUtilities::group_by('major_name', OAuth::fetch_user_courses_filtered());
         } catch (\Throwable $th) {
-            $classes = [];
+            $classes_grouped = [];
         }
         
-        foreach ($classes as $class => $class_name) {
-            echo "- $class_name</br>";
+        foreach ($classes_grouped as $class_group => $classes) {
+            echo "<b>$class_group</b></br>";
+            foreach ($classes as $class) {
+                echo "- ".$class['course_name']." </br>";
+            }
         }
 
     ?>

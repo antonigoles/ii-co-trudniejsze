@@ -1,4 +1,4 @@
-<h1 style="user-select: none;">
+<h1 style="user-select: none; text-align: center;">
     Co trudniejsze na II
 </h1>
 
@@ -33,7 +33,7 @@
             </p>
             <h3>Jakie dane ciągniecie z USOSa</h3>
             <p>
-                Tylko ID użytkownika (nie numer albumu)
+                Tylko ID użytkownika (nie numer albumu) oraz jakie przedmioty robiłaś/łeś
             </p>
         </div>
         <div class="faq-modal-close-btn">Zamknij</div>

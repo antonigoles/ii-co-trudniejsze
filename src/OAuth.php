@@ -2,8 +2,12 @@
 
 namespace App;
 
+use App\CourseModifier\CourseTransformer;
+
 class OAuth 
 {
+    use CachableTrait;
+
     public static function should_reauthenticate(): bool 
     {
         Session::start_session();
@@ -90,7 +94,7 @@ class OAuth
         return $result;
     }
 
-    public static function fetch_user_course_names(): array|null
+    public static function fetch_user_course_names(): array
     {
         $data = self::fetch_user_courses();
         if (!$data) throw new \Exception('Auth error'); 
@@ -101,23 +105,29 @@ class OAuth
         );
     }
 
-    public static function try_read_from_cache(string $key): mixed 
+    public static function fetch_user_courses_transformed(): array
     {
-        Session::start_session();
-        if (!isset($_SESSION['oauth_cache'])) return null;
-        $cache = json_decode($_SESSION['oauth_cache'], true);
-        return $cache[$key] ?? null;
-    }
+        $data = self::fetch_user_courses();
+        if (!$data) throw new \Exception('Auth error'); 
 
-    public static function write_cache(string $key, mixed $value): void 
-    {
-        Session::start_session();
-        $cache = [];
-        if (isset($_SESSION['oauth_cache'])) {
-            $cache = json_decode($_SESSION['oauth_cache'], true);
+        $data_flat = array_merge(...array_values($data['course_editions']));
+        $data_filtered = [];
+
+        foreach ($data_flat as $course) {
+            $course = [
+                'course_id' => $course['course_id'],
+                'course_name' => $course['course_name']['pl'],
+            ];
+
+            $transformed = CourseTransformer::transform_from_config($course);
+            if (!$transformed) {
+                continue;
+            }
+            
+            $data_filtered[] = $transformed;
         }
-        $cache[$key] = $value;
-        $_SESSION['oauth_cache'] = json_encode($cache);
+
+        return $data_filtered;
     }
 
     public static function fetch_user_id(): string|null
